@@ -5,11 +5,14 @@ const board = document.getElementById('game-board');
 const snake = [{x: 10, y: 10}];
 const apple = {x: 5, y: 5};
 let direction = {x: 1, y: 0};
-const gameSpeed = 200;
+// Default game speed in milliseconds
+let gameSpeed = 500;
 let timeSpent = 0;
 let bestTime = localStorage.getItem('bestTime') || 0;
 let lifelines = 3;
 let isGameActive = false;
+// default difficulty
+let difficulty = 'normal';
 
 // Timer and game intervals
 let gameInterval;
@@ -24,8 +27,26 @@ const gameTimerFunc = () => {
         // increase time spent by every secs
         timeSpent++;
         document.getElementById('time').textContent = timeSpent;
+
+        // increase game speed as time paases (SPEED INCREASES EVERY 10 SECONDS)
+        if (timeSpent % 10 === 0) {
+            increaseGameSpeed();
+        }
     }, 1000);
 };
+
+function increaseGameSpeed() {
+    // Limit the speed increase
+    if (gameSpeed > 100) {
+        // Decrease the interval for faster speed
+        gameSpeed -= 10;
+
+        // Clear the previous interval
+        clearInterval(gameInterval);
+        // Restart with faster speed
+        gameInterval = setInterval(moveSnake, gameSpeed)
+    }
+}
 
 // Function to center the gameBoard using JS instead of CSS
 function centerBoard() {
@@ -187,6 +208,23 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
+// Movement buttons for touchScreen Users
+document.getElementById('move-up').addEventListener('click', () => {
+    if (direction.y === 0) direction = {x: 0, y: -1};
+});
+
+document.getElementById('move-down').addEventListener('click', () => {
+    if (direction.y === 0) direction = {x: 0, y: 1};
+});
+
+document.getElementById('move-left').addEventListener('click', () => {
+    if (direction.x === 0) direction = {x: -1, y: 0};
+});
+
+document.getElementById('move-up').addEventListener('click', () => {
+    if (direction.x === 0) direction = {x: 1, y: 0};
+});
+
 // Function to start the game
 function startGame() {
     lifelines = 3;
@@ -203,6 +241,8 @@ function startGame() {
     drawGame();
     // START the timer
     gameTimerFunc(); 
+    // Set speed based on difficulty
+    setDifficulty();
     // Start moving snake
     gameInterval = setInterval(moveSnake, gameSpeed);
     isGameActive = true;
@@ -210,6 +250,7 @@ function startGame() {
     document.getElementById('start-btn').disabled = true;
     // Disable retart button until game ends
     document.getElementById('restart-btn').disabled = true;
+    
 
 }
 // Restart game function
@@ -222,11 +263,25 @@ function restartGame() {
     startGame();
 }
 
+// Set game speed based on difficulty
+function setDifficulty() {
+    let difficulty =  document.getElementById('difficulty').value;
+
+    if (difficulty === 'easy') {
+        // Slow
+        gameSpeed = 500;
+    } else if (difficulty === 'normal') {
+        // Normal speed
+        gameSpeed = 300;
+    } else if (difficulty === 'difficult') {
+        // Fast
+        gameSpeed = 150;
+    }
+}
+
 // Center the game board on load
    centerBoard();
 
 // Add event listeners to buttons
 document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', restartGame);
-
-

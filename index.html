@@ -15,10 +15,28 @@
     <div>Time spent: <span id="time">0</span> Seconds</div>
     <div>Best Time: <span id="best-time">0</span> Seconds</div>
     <div>Lifelines: <span id="lifelines">3</span></div>
+
+    <!-- SELECT THE DIFFICULTY LEVELS -->
+    <div>
+        <label for="difficulty">Select difficulty:  </label>
+        <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="normal">Normal</option>
+            <option value="difficult">difficult</option>
+        </select>
+    </div>
     <div id="control">
         <button id="start-btn">Start Game</button>
         <button id="restart-btn" disabled>Restart Game</button>
     </div>
+
+    <!-- MOVEMENT BUTTONS FOR TOUCHSCREEN CONTROLS -->
+     <div id="touch-controls">
+        <button id="move-up">Up</button>
+        <button id="move-left">Left</button>
+        <button id="move-down">Down</button>
+        <button id="move-right">Right</button>
+     </div>
     
     <script src="./snake.js"></script>
 </body>
