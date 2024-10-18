@@ -209,21 +209,145 @@ document.addEventListener('keydown', (event) => {
 });
 
 // Movement buttons for touchScreen Users
-document.getElementById('move-up').addEventListener('click', () => {
-    if (direction.y === 0) direction = {x: 0, y: -1};
-});
+// document.getElementById('move-up').addEventListener('click', () => {
+//     if (direction.y === 0) direction = {x: 0, y: -1};
+// });
 
-document.getElementById('move-down').addEventListener('click', () => {
-    if (direction.y === 0) direction = {x: 0, y: 1};
-});
+// document.getElementById('move-down').addEventListener('click', () => {
+//     if (direction.y === 0) direction = {x: 0, y: 1};
+// });
 
-document.getElementById('move-left').addEventListener('click', () => {
-    if (direction.x === 0) direction = {x: -1, y: 0};
-});
+// document.getElementById('move-left').addEventListener('click', () => {
+//     if (direction.x === 0) direction = {x: -1, y: 0};
+// });
 
-document.getElementById('move-up').addEventListener('click', () => {
-    if (direction.x === 0) direction = {x: 1, y: 0};
-});
+// document.getElementById('move-right').addEventListener('click', () => {
+//     if (direction.x === 0) direction = {x: 1, y: 0};
+// });
+//Function to handle direction change with switch instead of function
+// function changeDirection(direction) {
+//     switch (direction) {
+//         case 'up':
+//            if (direction !== 'down') velocity = { x: 0, y: -1};
+//            break;
+//         case 'down':
+//            if (direction !== 'up') velocity = { x: 0, y: 1};
+//            break;
+//         case 'left':
+//            if (direction !== 'right') velocity = { x: -1, y: 0};
+//            break;
+//         case 'right':
+//            if (direction !== 'left') velocity = { x: 1, y: -0};
+//            break;
+//     }
+// }
+
+// create movement buttons
+function createButtons() {
+    const buttons = document.createElement('div');
+    buttons.id = 'buttons';
+    buttons.style.display = 'flex';
+    // Stack them vertically
+    buttons.style.flexDirection = 'column';
+
+    // Create the up button
+    const upButton = document.createElement('button');
+    upButton.textContent = 'Up';
+    upButton.onclick = () => {
+        // Move up
+        direction = {x:0, y: -1};
+    };
+    buttons.appendChild(upButton);
+
+    // Create a container for left and right buttons
+    const leftRightContainer = document.createElement('div');
+    leftRightContainer.style.display = 'Left';
+    leftRightContainer.style.justifyContent = 'space-between';
+
+    // Create the Left button
+    const leftButton = document.createElement('button');
+    leftButton.textContent = 'Left';
+    leftButton.onclick = () => {
+        //Move Left
+        direction = {x: -1, y: 0}
+    };
+    leftRightContainer.appendChild(leftButton);
+
+    // Create the Right button
+    const rightButton = document.createElement('button');
+    rightButton.textContent = 'Right';
+    rightButton.onclick = () => {
+        //Move Right
+        direction = {x: 1, y: 0}
+    };
+    leftRightContainer.appendChild(rightButton);
+
+    // Add left and right buttons to the container
+    buttons.appendChild(leftRightContainer);
+
+    // Create the down button
+    const downButton = document.createElement('button');
+    downButton.textContent = 'Down';
+    downButton.onclick = () => {
+        // Move down
+        direction = {x:0, y: 1};
+    };
+    buttons.appendChild(downButton);
+
+    // Append buttons to the game container or body
+    document.body.appendChild(buttons);
+
+}
+
+
+// Call the function when the page loads and when the window resizes
+window.onload = function() {
+    // Ensure buttons are created on load
+    createButtons()
+    // Adjust layout on load
+    adjustForScreensize();
+};
+
+// Adjust layout on resize
+window.onresize = adjustForScreensize;
+
+// Screen Adjustment
+function adjustForScreensize() {
+    // Adjust the game board and element based on scrren size
+    const baord = document.getElementById('game-board');
+    const buttons = document.getElementById('butttons');
+
+    // Check if board and button exist before adjusting style
+    // Exist if elements are not yet created
+    if (!board || !buttons) return;
+
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+// if the screen width is less than 600px
+    if (screenHeight < 600) {
+        // 80% of the viewpoint width
+        board.style.width = '80vw';
+        // keep it square
+        board.style.height = '80vw';
+
+        // Adjust button layout for small screens
+
+        // Stack button vertically on small screens
+        buttons.style.flexDirection = 'column';
+        buttons.style.width = '50%';
+        // center the buttons
+        buttons.style.margin = '0 auto'
+    } else {
+        // Default size for large screens
+        board.style.width = '400px';
+        board.style.height = '400px';
+
+        // Default horizontal layout
+        buttons.style.flexDirection = 'row';
+        buttons.style.width = 'auto';
+    }
+}
 
 // Function to start the game
 function startGame() {
@@ -238,11 +362,15 @@ function startGame() {
     // Reset snakes position
     snake[0] = {x: 10, y: 10};
     createBoard();
+    // Adjust the layout after creating elements
+    adjustForScreensize();
     drawGame();
     // START the timer
     gameTimerFunc(); 
     // Set speed based on difficulty
     setDifficulty();
+    // Hide status
+    // setTimeout();
     // Start moving snake
     gameInterval = setInterval(moveSnake, gameSpeed);
     isGameActive = true;
@@ -250,6 +378,15 @@ function startGame() {
     document.getElementById('start-btn').disabled = true;
     // Disable retart button until game ends
     document.getElementById('restart-btn').disabled = true;
+
+// Display the game status for 5 seconds, then hide it
+setTimeout(() => {
+    // Hide the game status after 5 seconds
+    const gameStatus = document.getElementById('game-status');
+    if (gameStatus) {
+        gameStatus.style.display = 'none';
+    }   
+}, 5000);    
     
 
 }
