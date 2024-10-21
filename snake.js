@@ -17,6 +17,7 @@ let difficulty = 'normal';
 // Timer and game intervals
 let gameInterval;
 let gameTimer;
+let gameStartTime;
 
 document.getElementById('best-time').textContent = bestTime;
 document.getElementById('lifelines').textContent = lifelines;
@@ -169,8 +170,27 @@ function endGame() {
     clearInterval(gameInterval);
     // stop the timer
     clearInterval(gameTimer);
-    // show user how long they survive 
-    document.getElementById('game-status').textContent = `Game over! You survived for ${timeSpent} seconds`;
+
+    // Display "Game-Over" and the time spent
+    const gameStatus = document.getElementById('game-status');
+    if (gameStatus) {
+        const timeSpent = Math.floor((Date.now() - gameStartTime) / 1000);
+        // show user how long they survive 
+        gameStatus.textContent = `Game over! You survived for ${timeSpent} seconds`;
+        // Ensure it's visible/ Show game over message
+        gameStatus.style.display = 'block';
+    }
+
+        // Display the game status for 5 seconds, then hide it
+    setTimeout(() => {
+        // Hide the game status after 5 seconds
+        const gameStatus = document.getElementById('game-status');
+        if (gameStatus) {
+            gameStatus.style.display = 'none';
+        }   
+    }, 5000);    
+        
+    
 
     // Update the best time if the current time is better
     if (timeSpent > bestTime) {
@@ -249,13 +269,31 @@ function createButtons() {
     buttons.style.display = 'flex';
     // Stack them vertically
     buttons.style.flexDirection = 'column';
+    // Center buttons
+    buttons.style.alignItems = 'center';
+
+    // BUTTON STYLES
+    const buttonStyle = {
+        // Make text bold
+        fontWeight: 'bold',
+        // Increase font size
+        fontSize: '18px',
+        // Add padding for thr easier tap
+        padding: '5px 20px',
+        // Space between buttons
+        margin: '8px',
+        // Change cursor to pointer on hover
+        cursor: 'pointer',
+    };
 
     // Create the up button
     const upButton = document.createElement('button');
     upButton.textContent = 'Up';
+    // Apply styles
+    Object.assign(upButton.style, buttonStyle);
     upButton.onclick = () => {
         // Move up
-        direction = {x:0, y: -1};
+        direction = {x: 0, y: -1};
     };
     buttons.appendChild(upButton);
 
@@ -263,10 +301,14 @@ function createButtons() {
     const leftRightContainer = document.createElement('div');
     leftRightContainer.style.display = 'Left';
     leftRightContainer.style.justifyContent = 'space-between';
+    // Adjust width for spacing
+    // leftRightContainer.style.width = '200px';
 
     // Create the Left button
     const leftButton = document.createElement('button');
     leftButton.textContent = 'Left';
+    // Apply styles
+    Object.assign(leftButton.style, buttonStyle);
     leftButton.onclick = () => {
         //Move Left
         direction = {x: -1, y: 0}
@@ -276,6 +318,7 @@ function createButtons() {
     // Create the Right button
     const rightButton = document.createElement('button');
     rightButton.textContent = 'Right';
+    Object.assign(rightButton.style, buttonStyle);
     rightButton.onclick = () => {
         //Move Right
         direction = {x: 1, y: 0}
@@ -288,6 +331,8 @@ function createButtons() {
     // Create the down button
     const downButton = document.createElement('button');
     downButton.textContent = 'Down';
+    // Apply styles
+    Object.assign(downButton.style, buttonStyle);
     downButton.onclick = () => {
         // Move down
         direction = {x:0, y: 1};
@@ -365,6 +410,8 @@ function startGame() {
     // Adjust the layout after creating elements
     adjustForScreensize();
     drawGame();
+    // Initialize game start time
+    gameStartTime = Date.now();
     // START the timer
     gameTimerFunc(); 
     // Set speed based on difficulty
@@ -378,16 +425,6 @@ function startGame() {
     document.getElementById('start-btn').disabled = true;
     // Disable retart button until game ends
     document.getElementById('restart-btn').disabled = true;
-
-// Display the game status for 5 seconds, then hide it
-setTimeout(() => {
-    // Hide the game status after 5 seconds
-    const gameStatus = document.getElementById('game-status');
-    if (gameStatus) {
-        gameStatus.style.display = 'none';
-    }   
-}, 5000);    
-    
 
 }
 // Restart game function
